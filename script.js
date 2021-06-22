@@ -196,9 +196,13 @@ if (
 		const queriedCards = cards.split(' ');
 
 		queriedCards.forEach(card => {
-			if (limit > 0) {
+			if (limit !== undefined) {
+				if (limit > 0) {
+					deck.draw(card);
+					limit--;
+				}
+			} else {
 				deck.draw(card);
-				limit !== undefined && limit--;
 			}
 		})
 	}
@@ -213,11 +217,12 @@ if (
 		deck.filter("rank", queriedRanks);
 	}
 
-	if (limit !== undefined) deck.limit(limit);
+	if (limit !== undefined && limit >= 0) deck.limit(limit);
+
+	for (let i = 0; i < deck.possibleCards.length - 1; i++) {
+		deck.sort(deck.possibleCards[i], deck.possibleCards[i+1]);
+	}
 
 	deck.drawFiltered();
 
 }
-
-// Take a look at the deck object and its methods.
-console.log(deck);
