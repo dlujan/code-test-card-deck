@@ -173,9 +173,51 @@ class CardDeck {
 //
 //  Your code goes below this comment.
 /*------------------------------------------*/
-
 // Create a new card deck.
 const deck = new CardDeck(".deck", ".hand");
+
+const urlSearchParams = new URLSearchParams(window.location.search);
+const params = Object.fromEntries(urlSearchParams.entries());
+
+const cards = params.cards;
+const suits = params.suits;
+const ranks = params.ranks;
+let limit = params.limit;
+
+if (
+	cards !== undefined ||
+	suits !== undefined ||
+	ranks !== undefined ||
+	limit !== undefined 
+) {
+
+	// Draw cards explicitly by id - prioritize these cards
+	if (cards !== undefined) {
+		const queriedCards = cards.split(' ');
+
+		queriedCards.forEach(card => {
+			if (limit > 0) {
+				deck.draw(card);
+				limit !== undefined && limit--;
+			}
+		})
+	}
+
+	if (suits !== undefined) {
+		const queriedSuits = suits.split(' ');
+		deck.filter("suit", queriedSuits);
+	}
+
+	if (ranks !== undefined) {
+		const queriedRanks = ranks.split(' ').map(num => parseInt(num));
+		deck.filter("rank", queriedRanks);
+	}
+
+	if (limit !== undefined) deck.limit(limit);
+
+	deck.drawFiltered();
+
+}
 
 // Take a look at the deck object and its methods.
 console.log(deck);
